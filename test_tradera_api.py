@@ -70,13 +70,31 @@ def test_authentication(client: TraderaAPIClient):
         print(f"❌ Authentication failed: {e}")
         return False
 
-def test_get_item_field_values(client: TraderaAPIClient):
-    """Test getting item field values"""
-    print("\nTesting GetItemFieldValues...")
+def test_get_categories(client: TraderaAPIClient):
+    """Test getting categories"""
+    print("\nTesting GetCategories...")
 
     try:
-        # Use a sample category ID for testing
-        category_id = 12  # Electronics category
+        categories = client.get_categories()
+        print(f"✅ Retrieved {len(categories)} categories")
+
+        # Show sample categories
+        for i, category in enumerate(categories[:5]):  # Show first 5
+            print(f"  Category {i+1}: {category.get('Name', 'No name')} (ID: {category.get('CategoryId', 'No ID')})")
+
+        if len(categories) > 5:
+            print(f"  ... and {len(categories) - 5} more categories")
+
+        return categories
+    except Exception as e:
+        print(f"❌ Failed to get categories: {e}")
+        return None
+
+def test_get_item_field_values(client: TraderaAPIClient, category_id: int = 12):
+    """Test getting item field values"""
+    print(f"\nTesting GetItemFieldValues for category {category_id}...")
+
+    try:
         field_values = client.get_item_field_values(category_id)
         print(f"✅ Retrieved field values for category {category_id}: {len(field_values)} fields")
 
@@ -90,6 +108,31 @@ def test_get_item_field_values(client: TraderaAPIClient):
         return field_values
     except Exception as e:
         print(f"❌ Failed to get field values: {e}")
+        return None
+
+def test_search_category_count(client: TraderaAPIClient):
+    """Test searching category count"""
+    print("\nTesting SearchCategoryCount...")
+
+    try:
+        # Test with default parameters
+        search_results = client.search_category_count()
+        print(f"✅ Default search completed: {search_results['total_categories']} categories, {search_results['total_items']} items")
+
+        # Test with specific search parameters
+        search_params = {
+            'CategoryId': 12,  # Electronics
+            'SearchWords': 'laptop',
+            'ItemCondition': 'New',
+            'PriceMinimum': 100,
+            'PriceMaximum': 1000
+        }
+        specific_results = client.search_category_count(search_params)
+        print(f"✅ Specific search completed: {specific_results['total_categories']} categories")
+
+        return search_results
+    except Exception as e:
+        print(f"❌ Failed to search category count: {e}")
         return None
 
 def test_login_url_generation(client: TraderaAPIClient):
@@ -133,9 +176,9 @@ def test_get_seller_items(client: TraderaAPIClient):
         print(f"❌ Failed to get seller items: {e}")
         return None
 
-def test_add_sample_item(client: TraderaAPIClient, field_values: Dict[str, Any] = None):
-    """Test adding a sample item"""
-    print("\nTesting AddShopItem...")
+def test_add_shop_item_mock(client: TraderaAPIClient, field_values: Dict[str, Any] = None):
+    """Test adding a shop item (mock implementation)"""
+    print("\nTesting AddShopItem (Mock Implementation)...")
 
     # Create sample item data
     sample_item = create_sample_item_data(
@@ -192,6 +235,71 @@ def test_error_handling(client: TraderaAPIClient):
     except Exception as e:
         print(f"⚠️  Unexpected error type: {type(e).__name__}: {e}")
 
+def test_add_item_functionality(client: TraderaAPIClient):
+    """Test AddItem functionality with RestrictedService (Real API)"""
+    print("\nTesting AddItem functionality (Real RestrictedService API)...")
+
+    if not client.user_token:
+        print("⚠️  Skipping AddItem test - no user token available")
+        return None
+
+    try:
+        # Create sample item data for testing
+        item_data = {
+            'Title': 'Test Item - API Integration',
+            'Description': 'This is a test item created via the Tradera API to verify AddItem functionality.',
+            'CategoryId': 12,  # Electronics category
+            'Duration': 3,     # 3 days auction
+            'StartPrice': 1000,  # 10 SEK (1000 öre)
+            'ReservePrice': 800,  # 8 SEK reserve
+            'BuyItNowPrice': 2000,  # 20 SEK buy it now
+            'PaymentOptionIds': [1],  # Example payment method
+            'ItemType': 1,  # Auction item
+            'AutoCommit': False,  # Don't commit yet (for image upload workflow)
+            'VAT': 25,  # 25% VAT
+            'DescriptionLanguageCodeIso2': 'en'
+        }
+
+        print(f"Creating test item: {item_data['Title']}")
+
+        # Add the item
+        result = client.add_item(item_data)
+
+        print(f"✅ Item created successfully!")
+        print(f"  Request ID: {result['RequestId']}")
+        print(f"  Item ID: {result['ItemId']}")
+        print(f"  Status: {result['status']}")
+
+        # Test image upload workflow
+        print("\nTesting image upload workflow...")
+
+        # Simulate adding an image (we'll use a small test image)
+        test_image_data = b'fake_image_data_for_testing'
+
+        try:
+            image_result = client.add_item_image(
+                item_id=result['ItemId'],
+                image_data=test_image_data,
+                image_name='test_image.jpg'
+            )
+            print(f"✅ Image added successfully: {image_result}")
+
+            # Commit the item
+            commit_result = client.add_item_commit(result['ItemId'])
+            print(f"✅ Item committed successfully: {commit_result}")
+
+        except Exception as img_e:
+            print(f"⚠️  Image upload workflow test failed (this is expected in test environment): {img_e}")
+
+        return result
+
+    except TraderaAPIError as e:
+        print(f"❌ AddItem failed with TraderaAPIError: {e}")
+        return None
+    except Exception as e:
+        print(f"❌ AddItem failed with unexpected error: {e}")
+        return None
+
 def run_full_test():
     """Run the complete test suite"""
     print("Tradera API Client Test Suite")
@@ -214,15 +322,26 @@ def run_full_test():
     auth_success = test_authentication(client)
 
     # Test basic operations (these might fail without proper authentication)
-    field_values = test_get_item_field_values(client)
+    categories = test_get_categories(client)
+    if categories:
+        category_id = categories[0]['CategoryId']
+    else:
+        category_id = 12  # Default to Electronics category
+    field_values = test_get_item_field_values(client, category_id)
 
     # Test login URL generation (doesn't require authentication)
     test_login_url_generation(client)
 
+    # Test search functionality (doesn't require authentication)
+    test_search_category_count(client)
+
     if auth_success:
         # These tests require authentication
         test_get_seller_items(client)
-        test_add_sample_item(client, field_values)
+        test_add_shop_item_mock(client, field_values)
+
+        # Test AddItem functionality (requires RestrictedService access)
+        test_add_item_functionality(client)
 
     # Test rate limiting and error handling
     test_rate_limiting(client)
