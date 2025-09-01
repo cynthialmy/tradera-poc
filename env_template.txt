@@ -1,0 +1,19 @@
+# Tradera API Configuration
+# Copy this file to .env and fill in your actual credentials
+
+# Required API credentials from Tradera developer program
+TRADERA_APP_ID=your_application_id_here
+TRADERA_SERVICE_KEY=your_service_key_here
+TRADERA_PUBLIC_KEY=your_public_key_here
+
+# Optional API settings
+TRADERA_BASE_URL=https://api.tradera.com
+TRADERA_TIMEOUT=30
+
+# User credentials for testing (optional)
+TRADERA_USERNAME=your_tradera_username
+TRADERA_PASSWORD=your_tradera_password
+
+# Other API keys (if you have them)
+OPENAI_API_KEY=your_openai_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here

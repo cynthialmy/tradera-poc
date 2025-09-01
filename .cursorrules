@@ -1,6 +1,6 @@
 # Instructions
 
-During your interaction with the user, if you find anything reusable in this project (e.g. version of a library, model name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons` section in the `.cursorrules` file so you will not make the same mistake again. 
+During your interaction with the user, if you find anything reusable in this project (e.g. version of a library, model name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons` section in the `.cursorrules` file so you will not make the same mistake again.
 
 You should also use the `.cursorrules` file as a Scratchpad to organize your thoughts. Especially when you receive a new task, you should first review the content of the Scratchpad, clear old different task if necessary, first explain the task, and plan the steps you need to take to complete the task. You can use todo markers to indicate the progress, e.g.
 [X] Task 1
@@ -98,9 +98,85 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 ## Cursor learned
 
 - For search results, ensure proper handling of different character encodings (UTF-8) for international queries
+- When working with SOAP APIs using zeep, always check the WSDL structure first to understand the service names and port definitions
+- For Tradera API specifically, the service is named "PublicService" with port "PublicServiceSoap", not a default service
+- FetchToken method requires both AuthenticationHeader and ConfigurationHeader with proper namespaces
+- Use service_client.create_service() to access specific service ports when the WSDL has named services instead of default ones
 - Add debug information to stderr while keeping the main output clean in stdout for better pipeline integration
 - When using seaborn styles in matplotlib, use 'seaborn-v0_8' instead of 'seaborn' as the style name due to recent seaborn version changes
 - Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
 - When searching for recent news, use the current year (2025) instead of previous years, or simply use the "recent" keyword to get the latest information
 
 # Scratchpad
+
+## Current Task: Fixing Tradera API SOAP Service Access Issues
+
+**Task Description**: Debug and fix the SOAP service access error "There is no default service defined" in the Tradera API client.
+
+**Error Identified**:
+- The WSDL from Tradera API endpoint doesn't have a default service
+- Service is named "PublicService" with port "PublicServiceSoap"
+- FetchToken method requires both AuthenticationHeader and ConfigurationHeader
+
+**Root Cause**:
+- Using `service_client.service.method_name` instead of proper service port access
+- Missing ConfigurationHeader for FetchToken method
+- Incorrect service initialization approach
+
+**Planned Steps**:
+[X] Analyze WSDL structure to understand service definition
+[X] Fix service client initialization to use named service ports
+[X] Add missing ConfigurationHeader for FetchToken
+[X] Update _make_request method to use correct service access pattern
+[X] Add missing methods (get_item_field_values, get_request_results)
+[X] Test the fixed implementation
+
+**Current Status**: 🔄 IN PROGRESS - SOAP service access fixed, authentication in progress
+
+**What Was Fixed**:
+1. **Service Access**: Changed from `service_client.service.method_name` to `service_client.create_service()` with proper port names
+2. **Headers**: Added ConfigurationHeader with PublicKey for FetchToken method
+3. **Missing Methods**: Implemented placeholder methods for get_item_field_values and get_request_results
+4. **WSDL Understanding**: Documented proper service structure for Tradera API
+5. **Root Cause Identified**: .env file had incorrect base URL (`https://api.tradera.com` instead of `https://api.tradera.com/v3`)
+6. **SOAP Service Access**: ✅ COMPLETED - Client successfully connects to Tradera API and can access FetchToken method
+
+**Technical Changes Made**:
+- Updated `_make_request` method to use `create_service()` with 'PublicServiceSoap' port
+- Added ConfigurationHeader creation with proper namespace
+- Fixed header passing to include both AuthenticationHeader and ConfigurationHeader
+- Added missing method implementations to prevent AttributeError
+
+**Current Authentication Issue**:
+- **Status**: 🔄 IN PROGRESS - Getting "Invalid application id" error for ALL API methods
+- **Error Details**:
+  - SOAP: "403 - Forbidden: Access is denied"
+  - HTTP: "Invalid application id" (500 status)
+  - Affects ALL methods, not just FetchToken
+- **Root Cause Identified**: App ID "5458" is not valid/registered with Tradera API
+- **Possible Causes**:
+  1. App ID "5458" was never properly registered with Tradera developer program
+  2. App ID format is incorrect (maybe should be string, not number)
+  3. App ID has expired or been deactivated
+  4. Need to use different API credentials from Tradera
+
+**Next Steps for User**:
+1. **CRITICAL**: Verify App ID "5458" is properly registered with Tradera developer program
+2. **CRITICAL**: Check if App ID should be string format (e.g., "5458" vs 5458)
+3. **CRITICAL**: Verify API credentials in Tradera developer portal match .env file
+4. **CRITICAL**: Ensure Tradera application has proper permissions for API access
+5. Test with corrected credentials using `python test_tradera_api.py`
+6. Once App ID is valid, proceed with FetchToken authentication
+7. Proceed with actual API integration once authentication works
+
+**Key Lessons Learned**:
+- Always examine WSDL structure before implementing SOAP clients
+- Named services require explicit port access via create_service()
+- Some SOAP methods require multiple header types
+- Debug SOAP issues by checking WSDL definitions first
+- **CRITICAL**: Check environment variables and .env files for URL overrides
+- **CRITICAL**: Tradera API base URL must be `https://api.tradera.com/v3` (with /v3)
+- **CRITICAL**: WSDL endpoint must be `https://api.tradera.com/v3/publicservice.asmx?wsdl`
+- **CRITICAL**: App ID must be properly registered with Tradera developer program before API access
+- **CRITICAL**: "Invalid application id" error means App ID is not recognized by Tradera API
+- **CRITICAL**: Test basic API methods (GetCategories) to verify App ID validity before complex operations

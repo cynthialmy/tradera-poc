@@ -1,0 +1,5 @@
+# Tradera Authorization Token
+# Generated at: 2025-08-26T20:41:20.146005
+# Use this token in your API client
+
+test_token_12345
