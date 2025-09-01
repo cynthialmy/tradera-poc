@@ -244,23 +244,20 @@ class TraderaAPIClient:
                 secretKey=secret_key
             )
 
-            # Extract token and expiry from response based on SOAP documentation
-            if hasattr(response, 'FetchTokenResult'):
-                result = response.FetchTokenResult
-                if hasattr(result, 'AuthToken'):
-                    self.user_token = result.AuthToken
-                    if hasattr(result, 'HardExpirationTime'):
-                        self.token_expiry = result.HardExpirationTime
-                    else:
-                        # Default expiry: 24 hours from now
-                        self.token_expiry = datetime.now() + timedelta(hours=24)
-
-                    logger.info(f"Successfully fetched token for user {user_id}")
-                    return self.user_token
+            # Extract token and expiry from response
+            # The response is a Token object with AuthToken and HardExpirationTime
+            if hasattr(response, 'AuthToken'):
+                self.user_token = response.AuthToken
+                if hasattr(response, 'HardExpirationTime'):
+                    self.token_expiry = response.HardExpirationTime
                 else:
-                    raise TraderaAPIError("AuthToken not found in response")
+                    # Default expiry: 24 hours from now
+                    self.token_expiry = datetime.now() + timedelta(hours=24)
+
+                logger.info(f"Successfully fetched token for user {user_id}")
+                return self.user_token
             else:
-                raise TraderaAPIError("FetchTokenResult not found in response")
+                raise TraderaAPIError("AuthToken not found in response")
 
         except Exception as e:
             logger.error(f"Failed to fetch token: {e}")
