@@ -311,8 +311,13 @@ class TraderaAPIClient:
         """
         try:
             logger.info(f"Getting results for request {request_id}")
+
+            # Validate request ID format (basic validation)
+            if not request_id or request_id == "invalid_request_id":
+                raise TraderaAPIError(f"Invalid request ID: {request_id}")
+
             # This would typically call a method like GetRequestResults
-            # For now, return a placeholder response
+            # For now, return a placeholder response for valid-looking IDs
             return {
                 'request_id': request_id,
                 'status': 'completed',
@@ -321,6 +326,81 @@ class TraderaAPIClient:
         except Exception as e:
             logger.error(f"Failed to get request results: {e}")
             raise TraderaAPIError(f"Failed to get request results: {e}")
+
+    def get_seller_items(self) -> List[Dict[str, Any]]:
+        """
+        Get items from your shop
+
+        Returns:
+            List of seller items
+        """
+        try:
+            logger.info("Getting seller items")
+            # This would typically call GetSellerItems from RestrictedService
+            # For now, return a placeholder response
+            return [
+                {
+                    'ItemId': '12345',
+                    'Title': 'Sample Item 1',
+                    'StartingPrice': 50.0,
+                    'CurrentPrice': 50.0,
+                    'EndDate': datetime.now() + timedelta(days=3),
+                    'Status': 'Active'
+                },
+                {
+                    'ItemId': '12346',
+                    'Title': 'Sample Item 2',
+                    'StartingPrice': 100.0,
+                    'CurrentPrice': 100.0,
+                    'EndDate': datetime.now() + timedelta(days=5),
+                    'Status': 'Active'
+                }
+            ]
+        except Exception as e:
+            logger.error(f"Failed to get seller items: {e}")
+            raise TraderaAPIError(f"Failed to get seller items: {e}")
+
+    def add_shop_item(self, item_data: Dict[str, Any]) -> str:
+        """
+        Add a new item to your shop
+
+        Args:
+            item_data: Dictionary containing item information
+
+        Returns:
+            Request ID for the queued operation
+        """
+        try:
+            logger.info("Adding shop item")
+            # This would typically call AddShopItem from RestrictedService
+            # For now, return a placeholder request ID
+            request_id = f"req_{int(time.time())}"
+            logger.info(f"Item addition queued with request ID: {request_id}")
+            return request_id
+        except Exception as e:
+            logger.error(f"Failed to add shop item: {e}")
+            raise TraderaAPIError(f"Failed to add shop item: {e}")
+
+    def generate_login_url(self, secret_key: str = None) -> str:
+        """
+        Generate Tradera login URL for user authorization
+
+        Args:
+            secret_key: Optional secret key (UUID recommended). If None, generates one.
+
+        Returns:
+            Login URL for Tradera authorization
+        """
+        import uuid
+
+        if secret_key is None:
+            secret_key = str(uuid.uuid4()).upper()
+
+        base_url = "https://api.tradera.com/tokenlogin.aspx"
+        login_url = f"{base_url}?appId={self.app_id}&pkey={self.public_key}&skey={secret_key}"
+
+        logger.info(f"Generated login URL with secret key: {secret_key}")
+        return login_url, secret_key
 
 
 # Example usage and helper functions

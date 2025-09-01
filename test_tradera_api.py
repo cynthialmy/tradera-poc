@@ -49,22 +49,17 @@ def test_authentication(client: TraderaAPIClient):
     """Test user authentication"""
     print("\nTesting user authentication...")
 
-    # Read user_id from the auth info file
-    user_id = None
+    # Get user ID from environment variable or use the known one
+    user_id = os.getenv('TRADERA_TEST_USER_ID', '5986811')  # Default to known user ID
+
     try:
-        with open('tradera_auth_info.txt', 'r') as f:
-            for line in f:
-                if line.startswith('User ID:'):
-                    user_id = int(line.split(':')[1].strip())
-                    break
-    except Exception as e:
-        print(f"⚠️  Could not read user_id from auth info file: {e}")
+        user_id = int(user_id)
+    except ValueError:
+        print(f"⚠️  Invalid user ID format: {user_id}, using default: 5986811")
+        user_id = 5986811
 
-    if not user_id:
-        print("⚠️  User ID not found in auth info file, skipping authentication test")
-        return False
-
-    # Use the real secret key from the .env file
+    # For testing, we'll use a sample secret key
+    # In production, you'd generate this and use it in the login URL
     secret_key = "07829484-381D-433E-B437-84BCF22FDBFC"
 
     try:
@@ -95,6 +90,27 @@ def test_get_item_field_values(client: TraderaAPIClient):
         return field_values
     except Exception as e:
         print(f"❌ Failed to get field values: {e}")
+        return None
+
+def test_login_url_generation(client: TraderaAPIClient):
+    """Test login URL generation"""
+    print("\nTesting Login URL Generation...")
+
+    try:
+        login_url, secret_key = client.generate_login_url()
+        print(f"✅ Generated login URL successfully")
+        print(f"  URL: {login_url[:80]}...")
+        print(f"  Secret Key: {secret_key}")
+
+        # Test with custom secret key
+        custom_secret = "CUSTOM-SECRET-KEY-FOR-TESTING"
+        login_url2, secret_key2 = client.generate_login_url(custom_secret)
+        print(f"✅ Generated login URL with custom secret key")
+        print(f"  Secret Key: {secret_key2}")
+
+        return secret_key
+    except Exception as e:
+        print(f"❌ Failed to generate login URL: {e}")
         return None
 
 def test_get_seller_items(client: TraderaAPIClient):
@@ -199,6 +215,9 @@ def run_full_test():
 
     # Test basic operations (these might fail without proper authentication)
     field_values = test_get_item_field_values(client)
+
+    # Test login URL generation (doesn't require authentication)
+    test_login_url_generation(client)
 
     if auth_success:
         # These tests require authentication
