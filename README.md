@@ -1,8 +1,8 @@
-# 🚀 Tradera API Client
+# Tradera API Client POC
 
-A comprehensive Python client for Tradera's SOAP API services, providing full access to their marketplace for listing items, managing inventory, and handling orders.
+A Python client for Tradera's SOAP API services, providing full access to their marketplace for listing items, managing inventory, and handling orders.
 
-## ✨ Features
+## Features
 
 - **Full SOAP Service Support**: Implements all six Tradera API services
 - **Authentication Management**: Token-based user authentication with automatic expiry handling
@@ -11,8 +11,6 @@ A comprehensive Python client for Tradera's SOAP API services, providing full ac
 - **Request Queuing**: Support for Tradera's request queuing system with result tracking
 - **Type Safety**: Full type hints and comprehensive documentation
 - **Testing Tools**: Complete test suite with sample data and response validation
-
-## 🏗️ Architecture
 
 ### Services Implemented
 
@@ -200,19 +198,7 @@ print(f'Rate limit: {rate_info}')
 - **Sample Payloads**: `sample_payloads/` - Example API requests and responses
 - **Response Logs**: `response_logs/` - Real API response examples
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
+## Support
 
 If you encounter issues:
 
