@@ -1,4 +1,4 @@
-# 🚀 Tradera API POC Setup Guide
+# Tradera API POC Setup Guide
 
 This guide will walk you through setting up and testing the Tradera API client for your POC.
 

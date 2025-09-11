@@ -1,0 +1,379 @@
+{
+	"info": {
+		"_postman_id": "tradera-api-collection",
+		"name": "Tradera API Collection",
+		"description": "Complete collection of Tradera API endpoints for testing and development",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Generate Login URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.tradera.com/tokenlogin.aspx?appId={{app_id}}&pkey={{public_key}}&skey={{secret_key}}",
+							"protocol": "https",
+							"host": ["api", "tradera", "com"],
+							"path": ["tokenlogin.aspx"],
+							"query": [
+								{
+									"key": "appId",
+									"value": "{{app_id}}"
+								},
+								{
+									"key": "pkey",
+									"value": "{{public_key}}"
+								},
+								{
+									"key": "skey",
+									"value": "{{secret_key}}"
+								}
+							]
+						},
+						"description": "Generate a login URL for user authorization"
+					}
+				},
+				{
+					"name": "Fetch Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/FetchToken"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:ConfigurationHeader>\n      <api:PublicKey>{{public_key}}</api:PublicKey>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:FetchToken>\n      <api:userId>{{user_id}}</api:userId>\n      <api:secretKey>{{secret_key}}</api:secretKey>\n    </api:FetchToken>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/publicservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["publicservice.asmx"]
+						},
+						"description": "Fetch authentication token for a user"
+					}
+				}
+			]
+		},
+		{
+			"name": "Public Service",
+			"item": [
+				{
+					"name": "Get Categories",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/GetCategories"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:ConfigurationHeader>\n      <api:PublicKey>{{public_key}}</api:PublicKey>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:GetCategories />\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/publicservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["publicservice.asmx"]
+						},
+						"description": "Get available categories"
+					}
+				},
+				{
+					"name": "Get Item Field Values",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/GetItemFieldValues"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:ConfigurationHeader>\n      <api:PublicKey>{{public_key}}</api:PublicKey>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:GetItemFieldValues />\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/publicservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["publicservice.asmx"]
+						},
+						"description": "Get available field values for items"
+					}
+				},
+				{
+					"name": "Get Shipping Options",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/GetShippingOptions"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:ConfigurationHeader>\n      <api:PublicKey>{{public_key}}</api:PublicKey>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:GetShippingOptions />\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/publicservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["publicservice.asmx"]
+						},
+						"description": "Get available shipping options"
+					}
+				},
+				{
+					"name": "Get Seller Items",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/GetSellerItems"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:ConfigurationHeader>\n      <api:PublicKey>{{public_key}}</api:PublicKey>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:GetSellerItems>\n      <api:userId>{{user_id}}</api:userId>\n      <api:categoryId>0</api:categoryId>\n      <api:filterActive>All</api:filterActive>\n      <api:minEndDate xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" />\n      <api:maxEndDate xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" />\n      <api:filterItemType>All</api:filterItemType>\n    </api:GetSellerItems>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/publicservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["publicservice.asmx"]
+						},
+						"description": "Get seller items"
+					}
+				}
+			]
+		},
+		{
+			"name": "Restricted Service",
+			"item": [
+				{
+					"name": "Get Member Payment Options",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/GetMemberPaymentOptions"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:AuthorizationHeader>\n      <api:UserId>{{user_id}}</api:UserId>\n      <api:Token>{{user_token}}</api:Token>\n    </api:AuthorizationHeader>\n    <api:ConfigurationHeader>\n      <api:Sandbox>0</api:Sandbox>\n      <api:MaxResultAge>3600</api:MaxResultAge>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:GetMemberPaymentOptions>\n      <api:memberId>{{user_id}}</api:memberId>\n    </api:GetMemberPaymentOptions>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/restrictedservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["restrictedservice.asmx"]
+						},
+						"description": "Get member payment options"
+					}
+				},
+				{
+					"name": "Add Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/AddItem"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:AuthorizationHeader>\n      <api:UserId>{{user_id}}</api:UserId>\n      <api:Token>{{user_token}}</api:Token>\n    </api:AuthorizationHeader>\n    <api:ConfigurationHeader>\n      <api:Sandbox>0</api:Sandbox>\n      <api:MaxResultAge>3600</api:MaxResultAge>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:AddItem>\n      <api:itemRequest>\n        <api:Title>{{item_title}}</api:Title>\n        <api:Description>{{item_description}}</api:Description>\n        <api:CategoryId>{{category_id}}</api:CategoryId>\n        <api:Duration>7</api:Duration>\n        <api:Restarts>0</api:Restarts>\n        <api:StartPrice>{{start_price}}</api:StartPrice>\n        <api:ReservePrice>{{reserve_price}}</api:ReservePrice>\n        <api:BuyItNowPrice>{{buy_it_now_price}}</api:BuyItNowPrice>\n        <api:PaymentOptionIds>\n          <api:int>{{payment_option_id}}</api:int>\n        </api:PaymentOptionIds>\n        <api:ShippingOptions>\n          <api:ItemShipping>\n            <api:ShippingOptionId>{{shipping_option_id}}</api:ShippingOptionId>\n            <api:Cost>0</api:Cost>\n            <api:ShippingWeight>1.0</api:ShippingWeight>\n            <api:ShippingProductId>1</api:ShippingProductId>\n            <api:ShippingProviderId>1</api:ShippingProviderId>\n          </api:ItemShipping>\n        </api:ShippingOptions>\n        <api:AcceptedBidderId>1</api:AcceptedBidderId>\n        <api:ExpoItemIds>\n          <api:int></api:int>\n        </api:ExpoItemIds>\n        <api:ItemAttributes>\n          <api:int>1</api:int>\n          <api:int>2</api:int>\n          <api:int>3</api:int>\n        </api:ItemAttributes>\n        <api:ItemType>1</api:ItemType>\n        <api:AutoCommit>true</api:AutoCommit>\n        <api:VAT>25</api:VAT>\n        <api:ShippingCondition></api:ShippingCondition>\n        <api:PaymentCondition></api:PaymentCondition>\n        <api:CampaignCode></api:CampaignCode>\n        <api:DescriptionLanguageCodeIso2>sv</api:DescriptionLanguageCodeIso2>\n        <api:AttributeValues>\n          <api:Terms>\n            <api:TermValues></api:TermValues>\n          </api:Terms>\n          <api:Numbers>\n            <api:NumberValues></api:NumberValues>\n          </api:Numbers>\n        </api:AttributeValues>\n        <api:RestartedFromItemId>0</api:RestartedFromItemId>\n        <api:OwnReferences>\n          <api:string></api:string>\n        </api:OwnReferences>\n      </api:itemRequest>\n    </api:AddItem>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/restrictedservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["restrictedservice.asmx"]
+						},
+						"description": "Add a new item to Tradera"
+					}
+				},
+				{
+					"name": "Add Item Image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/AddItemImage"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:AuthorizationHeader>\n      <api:UserId>{{user_id}}</api:UserId>\n      <api:Token>{{user_token}}</api:Token>\n    </api:AuthorizationHeader>\n    <api:ConfigurationHeader>\n      <api:Sandbox>0</api:Sandbox>\n      <api:MaxResultAge>3600</api:MaxResultAge>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:AddItemImage>\n      <api:itemId>{{item_id}}</api:itemId>\n      <api:imageData>{{image_data}}</api:imageData>\n      <api:imageName>{{image_name}}</api:imageName>\n    </api:AddItemImage>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/restrictedservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["restrictedservice.asmx"]
+						},
+						"description": "Add an image to an item"
+					}
+				},
+				{
+					"name": "Add Item Commit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://api.tradera.com/AddItemCommit"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:api=\"http://api.tradera.com\">\n  <soap:Header>\n    <api:AuthenticationHeader>\n      <api:AppId>{{app_id}}</api:AppId>\n      <api:AppKey>{{service_key}}</api:AppKey>\n    </api:AuthenticationHeader>\n    <api:AuthorizationHeader>\n      <api:UserId>{{user_id}}</api:UserId>\n      <api:Token>{{user_token}}</api:Token>\n    </api:AuthorizationHeader>\n    <api:ConfigurationHeader>\n      <api:Sandbox>0</api:Sandbox>\n      <api:MaxResultAge>3600</api:MaxResultAge>\n    </api:ConfigurationHeader>\n  </soap:Header>\n  <soap:Body>\n    <api:AddItemCommit>\n      <api:itemId>{{item_id}}</api:itemId>\n    </api:AddItemCommit>\n  </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{base_url}}/restrictedservice.asmx",
+							"host": ["{{base_url}}"],
+							"path": ["restrictedservice.asmx"]
+						},
+						"description": "Commit an item after adding images"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://api.tradera.com/v3",
+			"type": "string"
+		},
+		{
+			"key": "app_id",
+			"value": "5458",
+			"type": "string"
+		},
+		{
+			"key": "service_key",
+			"value": "4da031b0-6a7c-42b8-b...",
+			"type": "string"
+		},
+		{
+			"key": "public_key",
+			"value": "e25eec16-a7b0-4681-a...",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "5986811",
+			"type": "string"
+		},
+		{
+			"key": "user_token",
+			"value": "29a68060-a96f-4e1b-91ee-6046f1900cbf",
+			"type": "string"
+		},
+		{
+			"key": "secret_key",
+			"value": "07829484-381D-433E-B437-84BCF22FDBFC",
+			"type": "string"
+		},
+		{
+			"key": "item_title",
+			"value": "Test Item - API Integration",
+			"type": "string"
+		},
+		{
+			"key": "item_description",
+			"value": "This is a test item created via the Tradera API",
+			"type": "string"
+		},
+		{
+			"key": "category_id",
+			"value": "12",
+			"type": "string"
+		},
+		{
+			"key": "start_price",
+			"value": "1000",
+			"type": "string"
+		},
+		{
+			"key": "reserve_price",
+			"value": "1200",
+			"type": "string"
+		},
+		{
+			"key": "buy_it_now_price",
+			"value": "2000",
+			"type": "string"
+		},
+		{
+			"key": "payment_option_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "shipping_option_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "item_id",
+			"value": "12345",
+			"type": "string"
+		},
+		{
+			"key": "image_data",
+			"value": "base64_encoded_image_data",
+			"type": "string"
+		},
+		{
+			"key": "image_name",
+			"value": "test_image.jpg",
+			"type": "string"
+		}
+	]
+}
