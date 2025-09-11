@@ -191,10 +191,10 @@ print(f'Rate limit: {rate_info}')
 
 ## 📖 Additional Documentation
 
-- **Setup Guide**: `SETUP_GUIDE.md` - Step-by-step setup instructions
-- **API Capabilities**: `API_CAPABILITIES_AND_BLOCKERS.md` - Detailed capability analysis
-- **Sample Payloads**: `sample_payloads/` - Example API requests and responses
-- **Response Logs**: `response_logs/` - Real API response examples
+- **Setup Guide**: [SETUP_GUIDE.md](https://github.com/cynthialmy/tradera-poc/blob/main/SETUP_GUIDE.md) - Step-by-step setup instructions
+- **Postman Collection**: [`postman_collections/`](https://github.com/cynthialmy/tradera-poc/tree/main/postman_collections) - API reference collection
+- **Sample Payloads**: [`sample_payloads/`](https://github.com/cynthialmy/tradera-poc/tree/main/sample_payloads) - Example API requests and responses
+- **Response Logs**: [`response_logs/`](https://github.com/cynthialmy/tradera-poc/tree/main/response_logs) - Real API response examples
 
 ## Support
 
