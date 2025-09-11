@@ -307,17 +307,17 @@
 		},
 		{
 			"key": "user_id",
-			"value": "5986811",
+			"value": "{{YOUR_USER_ID}}",
 			"type": "string"
 		},
 		{
 			"key": "user_token",
-			"value": "29a68060-a96f-4e1b-91ee-6046f1900cbf",
+			"value": "{{YOUR_USER_TOKEN}}",
 			"type": "string"
 		},
 		{
 			"key": "secret_key",
-			"value": "07829484-381D-433E-B437-84BCF22FDBFC",
+			"value": "{{YOUR_SECRET_KEY}}",
 			"type": "string"
 		},
 		{
