@@ -56,11 +56,11 @@ def test_authentication(client: TraderaAPIClient):
         user_id = int(user_id)
     except ValueError:
         print(f"⚠️  Invalid user ID format: {user_id}, using default: 5986811")
-        user_id = 5986811
+        user_id = "YOUR_USER_ID"
 
     # For testing, we'll use a sample secret key
     # In production, you'd generate this and use it in the login URL
-    secret_key = "07829484-381D-433E-B437-84BCF22FDBFC"
+    secret_key = "YOUR_SECRET_KEY"
 
     try:
         token = client.fetch_token(user_id, secret_key)

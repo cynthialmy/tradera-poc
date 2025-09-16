@@ -48,7 +48,13 @@ pip install -r requirements.txt
 
 ### 2. Configuration
 
-Create a `.env` file with your Tradera API credentials:
+#### Get Tradera Credentials
+1. Register your application at Tradera's developer program
+2. Get your App ID, Service Key, and Public Key
+3. Set up callback URLs for authentication
+
+#### Set Environment Variables
+Create a `.env` file with your credentials:
 
 ```bash
 # Required API credentials from Tradera developer program
@@ -59,6 +65,28 @@ TRADERA_PUBLIC_KEY=your_public_key
 # Optional API settings
 TRADERA_BASE_URL=https://api.tradera.com/v3
 TRADERA_TIMEOUT=30
+```
+
+#### Authentication Flow
+1. **Start auth server**: `python auth_server.py`
+2. **Set callback URLs** in Tradera app settings:
+   - Accept: `http://localhost:8000/auth/success`
+   - Reject: `http://localhost:8000/auth/failure`
+3. **Complete authorization** on Tradera website
+4. **Token captured** automatically by local server
+
+#### Detailed Authentication Steps
+```python
+# Step 1: Generate Login URL
+login_url, secret_key = client.generate_login_url()
+
+# Step 2: User visits URL and authorizes your application
+
+# Step 3: Fetch Token
+token = client.fetch_token(user_id, secret_key)
+
+# Step 4: Make Authenticated Calls
+items = client.get_seller_items()
 ```
 
 ### 3. Basic Usage
@@ -139,6 +167,39 @@ rate_info = client.get_rate_limit_info()
 print(f'Rate limit: {rate_info}')
 "
 ```
+
+## 📖 Interactive Documentation
+
+### Swagger UI
+Start the interactive API documentation server:
+
+```bash
+# Start Swagger UI server
+python3 swagger_server.py
+```
+
+Then visit: **http://localhost:3000**
+
+Features:
+- ✅ **Interactive API Explorer** - Browse all endpoints
+- ✅ **Request/Response Examples** - See real SOAP examples
+- ✅ **Try It Out** - Test endpoints directly from browser
+- ✅ **Authentication Guide** - Step-by-step auth flow
+- ✅ **Schema Documentation** - Complete data models
+
+### Postman Collection
+Import `postman_collections/Tradera_API_Collection.json` into Postman for:
+- Pre-configured requests with proper SOAP headers
+- Environment variables for easy credential management
+- Complete test suite for all API methods
+
+### Access Points
+| Service          | URL                            | Description                   |
+| ---------------- | ------------------------------ | ----------------------------- |
+| **Swagger UI**   | http://localhost:3000          | Interactive API documentation |
+| **API Examples** | http://localhost:3000/examples | Request/response examples     |
+| **Health Check** | http://localhost:3000/health   | Server status                 |
+| **OpenAPI Spec** | http://localhost:3000/api-docs | Raw OpenAPI JSON              |
 
 ## 📚 API Reference
 

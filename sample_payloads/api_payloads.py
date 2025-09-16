@@ -8,7 +8,7 @@ This module contains essential sample payloads for Tradera API methods.
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 
-def get_fetch_token_payload(user_id: int = 5986811, secret_key: str = "07829484-381D-433E-B437-84BCF22FDBFC") -> Dict[str, Any]:
+def get_fetch_token_payload(user_id: int = "YOUR_USER_ID", secret_key: str = "YOUR_SECRET_KEY") -> Dict[str, Any]:
     """Sample payload for FetchToken method"""
     return {
         "userId": user_id,

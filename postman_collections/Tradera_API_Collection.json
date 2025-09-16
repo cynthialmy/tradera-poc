@@ -292,17 +292,17 @@
 		},
 		{
 			"key": "app_id",
-			"value": "5458",
+			"value": "YOUR_APP_ID",
 			"type": "string"
 		},
 		{
 			"key": "service_key",
-			"value": "4da031b0-6a7c-42b8-b...",
+			"value": "YOUR_SERVICE_KEY",
 			"type": "string"
 		},
 		{
 			"key": "public_key",
-			"value": "e25eec16-a7b0-4681-a...",
+			"value": "YOUR_PUBLIC_KEY",
 			"type": "string"
 		},
 		{

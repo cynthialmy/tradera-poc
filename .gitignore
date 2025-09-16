@@ -355,3 +355,19 @@ packer_cache/
 local/
 dev/
 development/
+
+# Security - Credentials and sensitive data
+credentials.json
+secrets.json
+*.credentials
+*.secrets
+auth_tokens.json
+user_data.json
+api_keys.txt
+tokens.txt
+
+# Tradera API specific sensitive files
+tradera_credentials.env
+tradera_config.json
+user_tokens.json
+api_responses.json

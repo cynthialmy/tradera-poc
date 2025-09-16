@@ -622,7 +622,7 @@ class TraderaAPIClient:
                     user_id = self.user_id
                 else:
                     # For testing, use a default user ID
-                    user_id = 5986811
+                    user_id = "YOUR_USER_ID"
                     logger.warning(f"No user_id provided, using default: {user_id}")
 
             # Call the actual GetSellerItems method from PublicService
@@ -1279,7 +1279,7 @@ class TraderaAPIClient:
                     member_id = self.user_id
                 else:
                     # For testing, use a default user ID
-                    member_id = 5986811
+                    member_id = "YOUR_USER_ID"
                     logger.warning(f"No member_id provided, using default: {member_id}")
 
             # Call the actual GetMemberPaymentOptions method from RestrictedService

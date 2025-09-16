@@ -7,24 +7,24 @@ This document contains detailed response logs and notes from testing the Tradera
 - **Date**: September 11, 2025
 - **API Version**: v3
 - **Base URL**: https://api.tradera.com/v3
-- **App ID**: 5458
-- **User ID**: 5986811
-- **Token**: 29a68060-a96f-4e1b-91ee-6046f1900cbf
+- **App ID**: [REDACTED]
+- **User ID**: [REDACTED]
+- **Token**: [REDACTED]
 
 ## Authentication Results
 
 ### ✅ FetchToken - SUCCESS
 ```
-INFO:tradera_api_client:Making FetchToken request with kwargs: {'userId': 5986811, 'secretKey': '07829484-381D-433E-B437-84BCF22FDBFC'}
+INFO:tradera_api_client:Making FetchToken request with kwargs: {'userId': [REDACTED], 'secretKey': '[REDACTED]'}
 INFO:tradera_api_client:Successfully called FetchToken
-INFO:tradera_api_client:Successfully fetched token for user 5986811
-✅ Authentication successful, token: 29a68060-a...
+INFO:tradera_api_client:Successfully fetched token for user [REDACTED]
+✅ Authentication successful, token: [REDACTED]
 ```
 
 **Response**: Successfully retrieved authentication token
-- **Token**: 29a68060-a96f-4e1b-91ee-6046f1900cbf
+- **Token**: [REDACTED]
 - **Expiry**: 2027-02-26 21:15:57 (valid for over a year)
-- **User ID**: 5986811
+- **User ID**: [REDACTED]
 
 ## Public Service Results
 
@@ -73,7 +73,7 @@ ERROR:tradera_api_client:Failed to get seller items: Server was unable to proces
 
 ### ✅ GetMemberPaymentOptions - SUCCESS
 ```
-INFO:tradera_api_client:Making RestrictedService GetMemberPaymentOptions request with kwargs: {'memberId': 5986811}
+INFO:tradera_api_client:Making RestrictedService GetMemberPaymentOptions request with kwargs: {'memberId': [REDACTED]}
 INFO:tradera_api_client:Successfully called RestrictedService GetMemberPaymentOptions
 WARNING:tradera_api_client:GetMemberPaymentOptionsResult not found in response, using fallback
 INFO:tradera_api_client:Successfully retrieved 3 payment options
@@ -108,12 +108,12 @@ INFO:tradera_api_client:Item 12345 ended successfully
 ### ❌ RemoveShopItem - FAILED (Item Not Found)
 ```
 ERROR:tradera_api_client:SOAP fault in RestrictedService RemoveShopItem: Invalid request ---> Request data is not valid:
-Shop item with id 12345 does not exist for user 5986811.
+Shop item with id 12345 does not exist for user [REDACTED].
 ⚠️  RemoveShopItem failed (expected): Failed to remove shop item 12345: SOAP fault in RestrictedService RemoveShopItem: Invalid request ---> Request data is not valid:
-Shop item with id 12345 does not exist for user 5986811.
+Shop item with id 12345 does not exist for user [REDACTED].
 ```
 
-**Error**: Shop item with id 12345 does not exist for user 5986811
+**Error**: Shop item with id 12345 does not exist for user [REDACTED]
 **Status**: Expected error - item doesn't exist
 
 ### ❌ GetShopSettings - FAILED (No Active Shop)
@@ -127,11 +127,11 @@ ERROR:tradera_api_client:SOAP fault in RestrictedService GetShopSettings: Invali
 
 ### ❌ SetShopSettings - FAILED (No Shop Account)
 ```
-ERROR:tradera_api_client:SOAP fault in RestrictedService SetShopSettings: Invalid request ---> This operation is not allowed as user with id 5986811 has no shop account
-⚠️  SetShopSettings failed: Failed to update shop settings: SOAP fault in RestrictedService SetShopSettings: Invalid request ---> This operation is not allowed as user with id 5986811 has no shop account
+ERROR:tradera_api_client:SOAP fault in RestrictedService SetShopSettings: Invalid request ---> This operation is not allowed as user with id [REDACTED] has no shop account
+⚠️  SetShopSettings failed: Failed to update shop settings: SOAP fault in RestrictedService SetShopSettings: Invalid request ---> This operation is not allowed as user with id [REDACTED] has no shop account
 ```
 
-**Error**: This operation is not allowed as user with id 5986811 has no shop account
+**Error**: This operation is not allowed as user with id [REDACTED] has no shop account
 **Status**: User doesn't have a shop account
 
 ### ❌ GetSellerTransactions - FAILED (Invalid Filter Value)

@@ -87,8 +87,8 @@ def quick_authenticate() -> Optional[str]:
         return None
 
     # Use known test credentials
-    user_id = 5986811
-    secret_key = "07829484-381D-433E-B437-84BCF22FDBFC"
+    user_id = "YOUR_USER_ID"
+    secret_key = "YOUR_SECRET_KEY"
 
     print(f"👤 Using test user ID: {user_id}")
     print(f"🔐 Using test secret key: {secret_key[:8]}...")

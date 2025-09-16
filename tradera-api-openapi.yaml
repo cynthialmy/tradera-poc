@@ -1,0 +1,837 @@
+openapi: 3.0.3
+info:
+  title: Tradera API
+  description: |
+    Comprehensive API documentation for Tradera's SOAP services.
+
+    This API provides access to Tradera's marketplace functionality including:
+    - Authentication and token management
+    - Item management (create, update, delete items)
+    - Category and field value retrieval
+    - Shipping and payment options
+    - Transaction management
+    - Shop settings management
+
+    ## Authentication
+
+    The API uses a multi-step authentication process:
+    1. **Application Authentication**: Use AppId and ServiceKey for basic API access
+    2. **User Authentication**: Generate login URL and fetch user tokens for restricted operations
+    3. **SOAP Headers**: All requests require specific SOAP headers for authentication
+
+    ## Rate Limiting
+
+    - **Limit**: 100 calls per 24 hours
+    - **Window**: Rolling 24-hour window
+    - **Headers**: Rate limit information is not provided in response headers
+
+    ## Services
+
+    - **PublicService**: Basic operations requiring only AppId and ServiceKey
+    - **RestrictedService**: Authenticated operations requiring user tokens
+
+  version: 1.0.0
+  contact:
+    name: Tradera API Support
+    url: https://api.tradera.com
+  license:
+    name: Tradera API License
+    url: https://api.tradera.com/license
+
+servers:
+  - url: https://api.tradera.com/v3
+    description: Tradera API Production Server
+  - url: https://api.tradera.com/v3/sandbox
+    description: Tradera API Sandbox Server (for testing)
+
+tags:
+  - name: Authentication
+    description: User authentication and token management
+  - name: Public Service
+    description: Basic API operations requiring only application credentials
+  - name: Restricted Service
+    description: Authenticated operations requiring user tokens
+  - name: Items
+    description: Item management operations
+  - name: Transactions
+    description: Transaction and order management
+  - name: Shop Management
+    description: Shop settings and configuration
+
+paths:
+  /tokenlogin.aspx:
+    get:
+      tags:
+        - Authentication
+      summary: Generate Login URL
+      description: |
+        Generates a login URL for user authorization. Users must visit this URL
+        to authorize your application and obtain a secret key for token generation.
+      parameters:
+        - name: appId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Your Tradera application ID
+          example: "YOUR_APP_ID"
+        - name: pkey
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Your Tradera public key
+          example: "YOUR_PUBLIC_KEY"
+        - name: skey
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Secret key (UUID recommended)
+          example: "your-secret-key-here"
+      responses:
+        '200':
+          description: Login URL generated successfully
+          content:
+            text/html:
+              schema:
+                type: string
+                description: HTML page with authorization form
+
+  /publicservice.asmx:
+    post:
+      tags:
+        - Public Service
+        - Items
+      summary: Public Service SOAP Endpoint
+      description: |
+        Main endpoint for PublicService operations. All requests must be SOAP XML
+        with proper authentication headers.
+
+        **Required SOAP Headers:**
+        - AuthenticationHeader (AppId, AppKey)
+        - ConfigurationHeader (PublicKey)
+
+        **Available Operations:**
+        - **Authentication**: FetchToken
+        - **Items**: GetCategories, GetFieldValues, GetShippingOptions, GetPaymentOptions, GetItemDetails
+      requestBody:
+        required: true
+        content:
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/SOAPEnvelope'
+            examples:
+              fetchToken:
+                summary: Fetch Token Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:ConfigurationHeader>
+                        <api:PublicKey>your_public_key</api:PublicKey>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:FetchToken>
+                        <api:userId>12345</api:userId>
+                        <api:secretKey>your_secret_key</api:secretKey>
+                      </api:FetchToken>
+                    </soap:Body>
+                  </soap:Envelope>
+              getCategories:
+                summary: Get Categories Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:ConfigurationHeader>
+                        <api:PublicKey>your_public_key</api:PublicKey>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetCategories />
+                    </soap:Body>
+                  </soap:Envelope>
+              getFieldValues:
+                summary: Get Field Values Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:ConfigurationHeader>
+                        <api:PublicKey>your_public_key</api:PublicKey>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetFieldValues>
+                        <api:categoryId>12</api:categoryId>
+                      </api:GetFieldValues>
+                    </soap:Body>
+                  </soap:Envelope>
+              getShippingOptions:
+                summary: Get Shipping Options Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:ConfigurationHeader>
+                        <api:PublicKey>your_public_key</api:PublicKey>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetShippingOptions />
+                    </soap:Body>
+                  </soap:Envelope>
+              getPaymentOptions:
+                summary: Get Payment Options Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:ConfigurationHeader>
+                        <api:PublicKey>your_public_key</api:PublicKey>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetPaymentOptions />
+                    </soap:Body>
+                  </soap:Envelope>
+              getItemDetails:
+                summary: Get Item Details Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:ConfigurationHeader>
+                        <api:PublicKey>your_public_key</api:PublicKey>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetItemDetails>
+                        <api:itemId>12345</api:itemId>
+                      </api:GetItemDetails>
+                    </soap:Body>
+                  </soap:Envelope>
+      responses:
+        '200':
+          description: SOAP response
+          content:
+            text/xml:
+              schema:
+                type: string
+                description: SOAP XML response body
+        '400':
+          description: Bad Request - Invalid SOAP request
+        '401':
+          description: Unauthorized - Invalid authentication
+        '500':
+          description: Internal Server Error
+
+  /restrictedservice.asmx:
+    post:
+      tags:
+        - Restricted Service
+        - Items
+        - Transactions
+        - Shop Management
+      summary: Restricted Service SOAP Endpoint
+      description: |
+        Main endpoint for RestrictedService operations. All requests must be SOAP XML
+        with proper authentication headers.
+
+        **Required SOAP Headers:**
+        - AuthenticationHeader (AppId, AppKey)
+        - AuthorizationHeader (UserId, Token)
+        - ConfigurationHeader (Sandbox, MaxResultAge)
+
+        **Available Operations:**
+        - **Items**: AddItem, UpdateItem, DeleteItem, GetMyItems, GetItemDetails
+        - **Transactions**: GetTransactions, GetTransactionDetails, UpdateTransactionStatus
+        - **Shop Management**: GetShopSettings, UpdateShopSettings, GetShopStatistics
+      requestBody:
+        required: true
+        content:
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/SOAPEnvelope'
+            examples:
+              addItem:
+                summary: Add Item Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:AuthorizationHeader>
+                        <api:UserId>12345</api:UserId>
+                        <api:Token>your_user_token</api:Token>
+                      </api:AuthorizationHeader>
+                      <api:ConfigurationHeader>
+                        <api:Sandbox>0</api:Sandbox>
+                        <api:MaxResultAge>3600</api:MaxResultAge>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:AddItem>
+                        <api:itemRequest>
+                          <api:Title>Test Item</api:Title>
+                          <api:Description>Item description</api:Description>
+                          <api:CategoryId>12</api:CategoryId>
+                          <api:Duration>7</api:Duration>
+                          <api:StartPrice>1000</api:StartPrice>
+                          <api:PaymentOptionIds>
+                            <api:int>1</api:int>
+                          </api:PaymentOptionIds>
+                          <api:ShippingOptions>
+                            <api:ItemShipping>
+                              <api:ShippingOptionId>1</api:ShippingOptionId>
+                              <api:Cost>0</api:Cost>
+                              <api:ShippingWeight>1.0</api:ShippingWeight>
+                              <api:ShippingProductId>1</api:ShippingProductId>
+                              <api:ShippingProviderId>1</api:ShippingProviderId>
+                            </api:ItemShipping>
+                          </api:ShippingOptions>
+                          <api:ItemType>1</api:ItemType>
+                          <api:AutoCommit>true</api:AutoCommit>
+                          <api:VAT>25</api:VAT>
+                        </api:itemRequest>
+                      </api:AddItem>
+                    </soap:Body>
+                  </soap:Envelope>
+              updateItem:
+                summary: Update Item Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:AuthorizationHeader>
+                        <api:UserId>12345</api:UserId>
+                        <api:Token>your_user_token</api:Token>
+                      </api:AuthorizationHeader>
+                      <api:ConfigurationHeader>
+                        <api:Sandbox>0</api:Sandbox>
+                        <api:MaxResultAge>3600</api:MaxResultAge>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:UpdateItem>
+                        <api:itemId>12345</api:itemId>
+                        <api:itemRequest>
+                          <api:Title>Updated Item Title</api:Title>
+                          <api:Description>Updated description</api:Description>
+                        </api:itemRequest>
+                      </api:UpdateItem>
+                    </soap:Body>
+                  </soap:Envelope>
+              getMyItems:
+                summary: Get My Items Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:AuthorizationHeader>
+                        <api:UserId>12345</api:UserId>
+                        <api:Token>your_user_token</api:Token>
+                      </api:AuthorizationHeader>
+                      <api:ConfigurationHeader>
+                        <api:Sandbox>0</api:Sandbox>
+                        <api:MaxResultAge>3600</api:MaxResultAge>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetMyItems>
+                        <api:status>Active</api:status>
+                        <api:pageNumber>1</api:pageNumber>
+                        <api:pageSize>50</api:pageSize>
+                      </api:GetMyItems>
+                    </soap:Body>
+                  </soap:Envelope>
+              getTransactions:
+                summary: Get Transactions Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:AuthorizationHeader>
+                        <api:UserId>12345</api:UserId>
+                        <api:Token>your_user_token</api:Token>
+                      </api:AuthorizationHeader>
+                      <api:ConfigurationHeader>
+                        <api:Sandbox>0</api:Sandbox>
+                        <api:MaxResultAge>3600</api:MaxResultAge>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetTransactions>
+                        <api:fromDate>2024-01-01T00:00:00</api:fromDate>
+                        <api:toDate>2024-12-31T23:59:59</api:toDate>
+                        <api:pageNumber>1</api:pageNumber>
+                        <api:pageSize>50</api:pageSize>
+                      </api:GetTransactions>
+                    </soap:Body>
+                  </soap:Envelope>
+              getShopSettings:
+                summary: Get Shop Settings Request
+                value: |
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:api="http://api.tradera.com">
+                    <soap:Header>
+                      <api:AuthenticationHeader>
+                        <api:AppId>YOUR_APP_ID</api:AppId>
+                        <api:AppKey>your_service_key</api:AppKey>
+                      </api:AuthenticationHeader>
+                      <api:AuthorizationHeader>
+                        <api:UserId>12345</api:UserId>
+                        <api:Token>your_user_token</api:Token>
+                      </api:AuthorizationHeader>
+                      <api:ConfigurationHeader>
+                        <api:Sandbox>0</api:Sandbox>
+                        <api:MaxResultAge>3600</api:MaxResultAge>
+                      </api:ConfigurationHeader>
+                    </soap:Header>
+                    <soap:Body>
+                      <api:GetShopSettings />
+                    </soap:Body>
+                  </soap:Envelope>
+      responses:
+        '200':
+          description: SOAP response
+          content:
+            text/xml:
+              schema:
+                type: string
+                description: SOAP XML response body
+        '400':
+          description: Bad Request - Invalid SOAP request
+        '401':
+          description: Unauthorized - Invalid authentication
+        '403':
+          description: Forbidden - Insufficient permissions
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    AuthenticationHeader:
+      type: object
+      required:
+        - AppId
+        - AppKey
+      properties:
+        AppId:
+          type: integer
+          description: Tradera application ID
+          example: "YOUR_APP_ID"
+        AppKey:
+          type: string
+          description: Tradera service key
+          example: "YOUR_SERVICE_KEY"
+
+    ConfigurationHeader:
+      type: object
+      properties:
+        PublicKey:
+          type: string
+          description: Tradera public key (for PublicService)
+          example: "YOUR_PUBLIC_KEY"
+        Sandbox:
+          type: integer
+          description: Sandbox mode (0=production, 1=sandbox)
+          example: 0
+        MaxResultAge:
+          type: integer
+          description: Maximum result age in seconds
+          example: 3600
+
+    AuthorizationHeader:
+      type: object
+      required:
+        - UserId
+        - Token
+      properties:
+        UserId:
+          type: integer
+          description: Tradera user ID
+          example: 12345
+        Token:
+          type: string
+          description: User authentication token
+          example: "user_auth_token_here"
+
+    ItemRequest:
+      type: object
+      required:
+        - Title
+        - Description
+        - CategoryId
+      properties:
+        Title:
+          type: string
+          description: Item title
+          example: "Vintage Camera"
+        Description:
+          type: string
+          description: Item description
+          example: "Beautiful vintage camera in excellent condition"
+        CategoryId:
+          type: integer
+          description: Tradera category ID
+          example: 12
+        Duration:
+          type: integer
+          description: Auction duration in days (3-14)
+          minimum: 3
+          maximum: 14
+          default: 7
+          example: 7
+        StartPrice:
+          type: integer
+          description: Starting price in öre (100 = 1 SEK)
+          example: 1000
+        ReservePrice:
+          type: integer
+          description: Reserve price in öre (optional)
+          example: 1200
+        BuyItNowPrice:
+          type: integer
+          description: Buy it now price in öre (optional)
+          example: 2000
+        PaymentOptionIds:
+          type: array
+          items:
+            type: integer
+          description: Payment method IDs
+          example: [1, 2]
+        ShippingOptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemShipping'
+          description: Shipping options
+        ItemType:
+          type: integer
+          description: Item type ID
+          default: 1
+          example: 1
+        AutoCommit:
+          type: boolean
+          description: Auto-commit item (set to false for image uploads)
+          default: true
+          example: true
+        VAT:
+          type: integer
+          description: VAT percentage
+          default: 25
+          example: 25
+
+    ItemShipping:
+      type: object
+      required:
+        - ShippingOptionId
+        - Cost
+        - ShippingWeight
+        - ShippingProductId
+        - ShippingProviderId
+      properties:
+        ShippingOptionId:
+          type: integer
+          description: Shipping option ID
+          example: 1
+        Cost:
+          type: integer
+          description: Shipping cost in öre
+          example: 0
+        ShippingWeight:
+          type: number
+          format: decimal
+          description: Package weight
+          example: 1.0
+        ShippingProductId:
+          type: integer
+          description: Shipping product ID
+          example: 1
+        ShippingProviderId:
+          type: integer
+          description: Shipping provider ID
+          example: 1
+
+    Category:
+      type: object
+      properties:
+        CategoryId:
+          type: integer
+          description: Category ID
+          example: 12
+        Name:
+          type: string
+          description: Category name
+          example: "Electronics"
+        ParentId:
+          type: integer
+          nullable: true
+          description: Parent category ID
+          example: null
+        Level:
+          type: integer
+          description: Category level
+          example: 1
+
+    Item:
+      type: object
+      properties:
+        ItemId:
+          type: string
+          description: Item ID
+          example: "12345"
+        Title:
+          type: string
+          description: Item title
+          example: "Vintage Camera"
+        Description:
+          type: string
+          description: Item description
+          example: "Beautiful vintage camera"
+        StartingPrice:
+          type: number
+          format: decimal
+          description: Starting price
+          example: 100.0
+        CurrentPrice:
+          type: number
+          format: decimal
+          description: Current highest bid
+          example: 150.0
+        CategoryId:
+          type: integer
+          description: Category ID
+          example: 12
+        Status:
+          type: string
+          description: Item status
+          example: "Active"
+        StartDate:
+          type: string
+          format: date-time
+          description: Auction start date
+        EndDate:
+          type: string
+          format: date-time
+          description: Auction end date
+        Quantity:
+          type: integer
+          description: Available quantity
+          example: 1
+        SellerId:
+          type: integer
+          description: Seller user ID
+          example: 12345
+
+    ShippingOption:
+      type: object
+      properties:
+        ShippingOptionId:
+          type: integer
+          description: Shipping option ID
+          example: 1
+        Name:
+          type: string
+          description: Shipping option name
+          example: "Standard Shipping"
+        Description:
+          type: string
+          description: Shipping option description
+          example: "Standard shipping option"
+        Cost:
+          type: number
+          format: decimal
+          description: Shipping cost
+          example: 0.0
+        IsActive:
+          type: boolean
+          description: Whether option is active
+          example: true
+
+    PaymentOption:
+      type: object
+      properties:
+        PaymentOptionId:
+          type: integer
+          description: Payment option ID
+          example: 1
+        Name:
+          type: string
+          description: Payment option name
+          example: "Bank Transfer"
+        Description:
+          type: string
+          description: Payment option description
+          example: "Bank transfer payment"
+        IsActive:
+          type: boolean
+          description: Whether option is active
+          example: true
+
+    Transaction:
+      type: object
+      properties:
+        TransactionId:
+          type: integer
+          description: Transaction ID
+          example: 12345
+        ItemId:
+          type: integer
+          description: Item ID
+          example: 67890
+        BuyerId:
+          type: integer
+          description: Buyer user ID
+          example: 54321
+        Amount:
+          type: number
+          format: decimal
+          description: Transaction amount
+          example: 150.0
+        Status:
+          type: string
+          description: Transaction status
+          example: "Completed"
+        TransactionDate:
+          type: string
+          format: date-time
+          description: Transaction date
+        PaymentMethod:
+          type: string
+          description: Payment method used
+          example: "Bank Transfer"
+        ShippingMethod:
+          type: string
+          description: Shipping method used
+          example: "Standard Shipping"
+
+    ShopSettings:
+      type: object
+      properties:
+        ShopName:
+          type: string
+          description: Shop name
+          example: "My Tradera Shop"
+        ShopDescription:
+          type: string
+          description: Shop description
+          example: "Quality items at great prices"
+        ShopUrl:
+          type: string
+          description: Shop URL
+          example: "https://my-shop.tradera.com"
+        IsActive:
+          type: boolean
+          description: Whether shop is active
+          example: true
+        DefaultPaymentMethod:
+          type: integer
+          description: Default payment method ID
+          example: 1
+        DefaultShippingOption:
+          type: integer
+          description: Default shipping option ID
+          example: 1
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Invalid authentication credentials"
+        code:
+          type: string
+          description: Error code
+          example: "AUTH_FAILED"
+        details:
+          type: string
+          description: Additional error details
+          example: "The provided AppId and AppKey combination is invalid"
+
+    SOAPEnvelope:
+      type: object
+      description: SOAP Envelope structure for XML requests
+      xml:
+        name: soap:Envelope
+        namespace: http://schemas.xmlsoap.org/soap/envelope/
+      properties:
+        Header:
+          type: object
+          xml:
+            name: soap:Header
+          properties:
+            AuthenticationHeader:
+              $ref: '#/components/schemas/AuthenticationHeader'
+            AuthorizationHeader:
+              $ref: '#/components/schemas/AuthorizationHeader'
+            ConfigurationHeader:
+              $ref: '#/components/schemas/ConfigurationHeader'
+        Body:
+          type: object
+          xml:
+            name: soap:Body
+          properties:
+            operation:
+              type: string
+              description: SOAP operation name
+
+  securitySchemes:
+    SOAPAuth:
+      type: apiKey
+      in: header
+      name: SOAPAction
+      description: SOAP action header for API operations
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentication (not used by Tradera API)
+
+security:
+  - SOAPAuth: []
+
+externalDocs:
+  description: Tradera API Documentation
+  url: https://api.tradera.com/documentation
